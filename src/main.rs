@@ -33,17 +33,12 @@ fn create(contents: String, items: &mut Vec<Contentstruct>) {
         content: contents,
     };
     items.push(toput)
-    // Add code here to handle the creation of a new item
-    // You can prompt the user for input and store it in a data structure
-    // You can also create a file or store the item in a database
 }
 
 fn list(items: &Vec<Contentstruct>) {
     println!("Listing all items...");
     for n in items {
         println!("id: {}, contents: {}", n.id, n.content)
-        // Add code here to retrieve and display all items
-        // You can read from a file or query a database
     }
 }
 
@@ -51,7 +46,4 @@ fn delete(second: String, items: &mut Vec<Contentstruct>) {
     println!("Deleting an item...");
     let secondnumver: usize = second.parse::<usize>().unwrap();
     let _removed = items.remove(secondnumver);
-    // Add code here to handle the deletion of an item
-    // You can prompt the user for input and remove the corresponding item from a data structure
-    // You can also delete a file or remove the item from a database
 }
