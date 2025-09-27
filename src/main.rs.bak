@@ -1,0 +1,53 @@
+use std::{env, io::stdin};
+struct Contentstruct {
+    id: usize,
+    content: String,
+}
+
+fn main() {
+    let items: Vec<Contentstruct> = Vec::new();
+
+    let mut command = String::new();
+    stdin().read_line(&mut command);
+    let mut second = command.trim().split_whitespace();
+    let rest: Vec<&str> = second.collect();
+    println!("rest is: {}", rest[0]);
+
+    match rest[0] {
+        "create" => create(String::from(rest[1]), items),
+        "list" => list(items),
+        "delete" => delete(),
+        _ => println!("Invalid command {}", rest[0]),
+    }
+}
+
+fn create(contents: String, mut items: Vec<Contentstruct>) {
+    println!("Creating a new item...");
+    let toput = Contentstruct {
+        id: items.len() + 1,
+        content: contents,
+    };
+
+    //toput.id = i.id + 1;
+    //toput.content = contents;
+    items.push(toput)
+    // Add code here to handle the creation of a new item
+    // You can prompt the user for input and store it in a data structure
+    // You can also create a file or store the item in a database
+}
+
+fn list(items: Vec<Contentstruct>) {
+    println!("Listing all items...");
+    for n in &items {
+        println!("id: {}, contents: {}", n.id, n.content)
+        // Add code here to retrieve and display all items
+        // You can read from a file or query a database
+    }
+}
+
+fn delete() {
+    println!("Deleting an item...");
+    // Add code here to handle the deletion of an item
+    // You can prompt the user for input and remove the corresponding item from a data structure
+    // You can also delete a file or remove the item from a database
+}
