@@ -6,6 +6,7 @@ use std::io::stdin;
 struct Contentstruct {
     id: usize,
     content: String,
+    tag: String,
 }
 fn import_notes(filename: &str) -> Result<Vec<Contentstruct>, std::io::Error> {
     let file = File::open(filename)?;
@@ -23,7 +24,8 @@ fn export_notes(items: &Vec<Contentstruct>, filename: &str) -> Result<(), std::i
 }
 fn main() {
     let mut items: Vec<Contentstruct> = Vec::new();
-
+    println!("Welcome to your note taking app!");
+    println!("Type \"help\" for a list of commands.");
     loop {
         println!("Please type a command: ");
         let mut command = String::new();
@@ -44,15 +46,26 @@ fn main() {
                     println!("Error exporting notes: {}", err);
                 }
             }
-            "create" => create(&rest[1..], &mut items),
+            "help" => println!(
+                "Available commands: create [tag, contents], list, delete [id], search [tag]"
+            ),
+            "create" => create(rest[1], &rest[2..], &mut items),
             "list" => list(&items),
             "delete" => delete(String::from(rest[1]), &mut items),
+            "search" => search(String::from(rest[1]), &mut items),
             _ => println!("Invalid command {}", rest[0]),
         }
     }
 }
-
-fn create(rest: &[&str], items: &mut Vec<Contentstruct>) {
+fn search(tag: String, items: &mut Vec<Contentstruct>) {
+    println!("Searching for items with tag: {}", tag);
+    for n in items {
+        if n.tag == tag {
+            println!("Id: {}, Contents: {}", n.id, n.content)
+        }
+    }
+}
+fn create(tagcontent: &str, rest: &[&str], items: &mut Vec<Contentstruct>) {
     println!("Creating a new item...");
     let contents = rest.join(" ");
 
@@ -60,10 +73,12 @@ fn create(rest: &[&str], items: &mut Vec<Contentstruct>) {
     if !items.is_empty() {
         next_id = items.iter().map(|item| item.id).max().unwrap() + 1;
     }
+    let tag = tagcontent;
 
     let toput = Contentstruct {
         id: next_id,
         content: contents,
+        tag: String::from(tag),
     };
     items.push(toput);
     println!("Created item with id: {}", next_id);
@@ -72,7 +87,7 @@ fn create(rest: &[&str], items: &mut Vec<Contentstruct>) {
 fn list(items: &Vec<Contentstruct>) {
     println!("Listing all items...");
     for n in items {
-        println!("Id: {}, Contents: {}", n.id, n.content)
+        println!("Id: {}, Tag: {}, Contents: {}", n.id, n.tag, n.content)
     }
 }
 
@@ -112,10 +127,12 @@ mod tests {
             Contentstruct {
                 id: 1,
                 content: "Hello, World!".to_string(),
+                tag: "".to_string(),
             },
             Contentstruct {
                 id: 2,
                 content: "Goodbye, World!".to_string(),
+                tag: "".to_string(),
             },
         ];
 
@@ -134,7 +151,7 @@ mod tests {
     #[test]
     fn test_create_with_empty_items_vector() {
         let mut items: Vec<Contentstruct> = Vec::new();
-        create(&["hello"], &mut items);
+        create("", &["hello"], &mut items);
         assert_eq!(items.len(), 1);
         assert_eq!(items[0].id, 1);
         assert_eq!(items[0].content, "hello");
@@ -145,8 +162,9 @@ mod tests {
         let mut items: Vec<Contentstruct> = vec![Contentstruct {
             id: 1,
             content: "world".to_string(),
+            tag: "".to_string(),
         }];
-        create(&["hello"], &mut items);
+        create("", &["hello"], &mut items);
         assert_eq!(items.len(), 2);
         assert_eq!(items[1].id, 2);
         assert_eq!(items[1].content, "hello");
@@ -158,10 +176,12 @@ mod tests {
             Contentstruct {
                 id: 1,
                 content: "world".to_string(),
+                tag: "".to_string(),
             },
             Contentstruct {
                 id: 2,
                 content: "hello".to_string(),
+                tag: "".to_string(),
             },
         ];
         delete("2".to_string(), &mut items);
