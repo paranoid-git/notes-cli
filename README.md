@@ -29,39 +29,40 @@ Here are the available commands:
 - `export`: Export notes to a JSON file
 - `help`: Helpful message
 - `search`: Search for notes via tag
+
 For example, to create a new note with the content "Hello, World!", run:
 
 ```bash
-note-manager create important "Hello, World!"
+create important "Hello, World!"
 ```
 
 To list all notes, run:
 
 ```bash
-note-manager list
+list
 ```
 
 To delete a note with the ID 2, run:
 
 ```bash
-note-manager delete 2
+delete 2
 ```
 
 To import notes from a JSON file, run:
 
 ```bash
-note-manager import notes.json
+import notes.json
 ```
 
 To export notes to a JSON file, run:
 
 ```bash
-note-manager export notes.json
+export notes.json
 ```
 
 To search for notes with the tag "important", run:
 
 ```bash
-note-manager search important
+search important
 ```
 
