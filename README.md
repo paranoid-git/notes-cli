@@ -1,5 +1,4 @@
-```markdown
-# Note Manager
+## Note Manager
 
 Note Manager is a simple command-line tool for managing notes in Rust.
 
@@ -66,9 +65,3 @@ To search for notes with the tag "important", run:
 note-manager search > important
 ```
 
-## License
-
-Note Manager is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
-```
-
-I hope this helps you generate a README.md file for your project! Let me know if you have any other questions.
