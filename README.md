@@ -62,6 +62,6 @@ note-manager export notes.json
 To search for notes with the tag "important", run:
 
 ```bash
-note-manager search > important
+note-manager search important
 ```
 
