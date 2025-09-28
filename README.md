@@ -1,23 +1,23 @@
 ## Note Manager
 
-Note Manager is a simple command-line tool for managing notes in Rust.
+notes-cli is a simple command-line tool for managing notes in Rust.
 
 ## Installation
 
-To install Note Manager, clone the repository and build the project:
+To install notes-cli, clone the repository and build the project:
 
 ```bash
-git clone https://github.com/yourusername/note-manager.git
-cd note-manager
+git clone https://github.com/paranoid-git/notes-cli.git
+cd notes-cli
 cargo build --release
 ```
 
 ## Usage
 
-To use Note Manager, run the `note-manager` binary and follow the prompts:
+To use notes-cli, run the binary and follow the prompts:
 
 ```bash
-./target/release/note-manager
+./target/release/notes-cli
 ```
 
 Here are the available commands:
