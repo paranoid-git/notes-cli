@@ -29,12 +29,18 @@ fn main() {
 fn create(rest: &[&str], items: &mut Vec<Contentstruct>) {
     println!("Creating a new item...");
     let contents = rest.join(" ");
+
+    let mut next_id = 1;
+    if !items.is_empty() {
+        next_id = items.iter().map(|item| item.id).max().unwrap() + 1;
+    }
+
     let toput = Contentstruct {
-        id: items.len(),
+        id: next_id,
         content: contents,
     };
     items.push(toput);
-    println!("Created item with id: {}", items.len() - 1);
+    println!("Created item with id: {}", next_id);
 }
 
 fn list(items: &Vec<Contentstruct>) {
@@ -47,6 +53,10 @@ fn list(items: &Vec<Contentstruct>) {
 fn delete(second: String, items: &mut Vec<Contentstruct>) {
     println!("Deleting an item...");
     let secondnumver: usize = second.parse::<usize>().unwrap();
-    let _removed = items.remove(secondnumver);
-    println!("Deleted item with id: {}", secondnumver);
+    if secondnumver <= items.len() {
+        items.remove(secondnumver - 1);
+        println!("Deleted item with id: {}", secondnumver);
+    } else {
+        println!("Invalid id: {}", secondnumver);
+    }
 }
