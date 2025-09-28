@@ -1,10 +1,26 @@
+use serde::{Deserialize, Serialize};
+use std::fs::File;
+use std::io::prelude::*;
 use std::io::stdin;
-
+#[derive(Serialize, Clone, Eq, PartialEq, Deserialize)]
 struct Contentstruct {
     id: usize,
     content: String,
 }
+fn import_notes(filename: &str) -> Result<Vec<Contentstruct>, std::io::Error> {
+    let file = File::open(filename)?;
+    let notes: Vec<Contentstruct> = serde_json::from_reader(file)?;
+    println!("Notes imported from {}", filename);
+    Ok(notes)
+}
 
+fn export_notes(items: &Vec<Contentstruct>, filename: &str) -> Result<(), std::io::Error> {
+    let json = serde_json::to_string(items)?;
+    let mut file = File::create(filename)?;
+    file.write_all(json.as_bytes())?;
+    println!("Notes exported to {}", filename);
+    Ok(())
+}
 fn main() {
     let mut items: Vec<Contentstruct> = Vec::new();
 
@@ -18,6 +34,16 @@ fn main() {
         let rest: Vec<&str> = second.collect();
         //println!("rest is: {:?}", rest);
         match rest[0] {
+            "import" => {
+                if let Ok(notes) = import_notes(rest[1]) {
+                    items = notes;
+                }
+            }
+            "export" => {
+                if let Err(err) = export_notes(&items, rest[1]) {
+                    println!("Error exporting notes: {}", err);
+                }
+            }
             "create" => create(&rest[1..], &mut items),
             "list" => list(&items),
             "delete" => delete(String::from(rest[1]), &mut items),
@@ -58,5 +84,89 @@ fn delete(second: String, items: &mut Vec<Contentstruct>) {
         println!("Deleted item with id: {}", secondnumver);
     } else {
         println!("Invalid id: {}", secondnumver);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_import_notes() {
+        let filename = "asd.json";
+        let contents = r#"[{"id":1,"content":"Hello, World!"}]"#;
+        let mut file = File::create(filename).unwrap();
+        file.write_all(contents.as_bytes()).unwrap();
+
+        let notes = import_notes(filename).unwrap();
+        assert_eq!(notes.len(), 1);
+        assert_eq!(notes[0].id, 1);
+        assert_eq!(notes[0].content, "Hello, World!");
+
+        // Clean up the test file
+        std::fs::remove_file(filename).unwrap();
+    }
+
+    #[test]
+    fn test_export_notes() {
+        let items = vec![
+            Contentstruct {
+                id: 1,
+                content: "Hello, World!".to_string(),
+            },
+            Contentstruct {
+                id: 2,
+                content: "Goodbye, World!".to_string(),
+            },
+        ];
+
+        let filename = "asd.json";
+        export_notes(&items, filename).unwrap();
+
+        let contents = std::fs::read_to_string(filename).unwrap();
+        assert_eq!(
+            contents,
+            r#"[{"id":1,"content":"Hello, World!"},{"id":2,"content":"Goodbye, World!"}]"#
+        );
+
+        // Clean up the test file
+        std::fs::remove_file(filename).unwrap();
+    }
+    #[test]
+    fn test_create_with_empty_items_vector() {
+        let mut items: Vec<Contentstruct> = Vec::new();
+        create(&["hello"], &mut items);
+        assert_eq!(items.len(), 1);
+        assert_eq!(items[0].id, 1);
+        assert_eq!(items[0].content, "hello");
+    }
+
+    #[test]
+    fn test_create_with_non_empty_items_vector() {
+        let mut items: Vec<Contentstruct> = vec![Contentstruct {
+            id: 1,
+            content: "world".to_string(),
+        }];
+        create(&["hello"], &mut items);
+        assert_eq!(items.len(), 2);
+        assert_eq!(items[1].id, 2);
+        assert_eq!(items[1].content, "hello");
+    }
+
+    #[test]
+    fn test_delete() {
+        let mut items: Vec<Contentstruct> = vec![
+            Contentstruct {
+                id: 1,
+                content: "world".to_string(),
+            },
+            Contentstruct {
+                id: 2,
+                content: "hello".to_string(),
+            },
+        ];
+        delete("2".to_string(), &mut items);
+        assert_eq!(items.len(), 1);
+        assert_eq!(items[0].id, 1);
+        assert_eq!(items[0].content, "world");
     }
 }
