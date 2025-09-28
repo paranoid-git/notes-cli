@@ -16,10 +16,9 @@ fn main() {
             .expect("Failed to read line");
         let second = command.trim().split_whitespace();
         let rest: Vec<&str> = second.collect();
-        // println!("rest is: {}", rest[0]);
-
+        //println!("rest is: {:?}", rest);
         match rest[0] {
-            "create" => create(String::from(rest[1]), &mut items),
+            "create" => create(&rest[1..], &mut items),
             "list" => list(&items),
             "delete" => delete(String::from(rest[1]), &mut items),
             _ => println!("Invalid command {}", rest[0]),
@@ -27,8 +26,9 @@ fn main() {
     }
 }
 
-fn create(contents: String, items: &mut Vec<Contentstruct>) {
+fn create(rest: &[&str], items: &mut Vec<Contentstruct>) {
     println!("Creating a new item...");
+    let contents = rest.join(" ");
     let toput = Contentstruct {
         id: items.len(),
         content: contents,
